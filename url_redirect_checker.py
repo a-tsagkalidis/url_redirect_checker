@@ -1,3 +1,4 @@
+import sys
 import requests
 import openpyxl
 from tqdm import tqdm
@@ -72,14 +73,14 @@ def main(hdl_urls, redirect_urls):
 
 if __name__ == "__main__":
     hdl_urls = get_urls_from_excel(
-        "all_hdl_urls.xlsx",
-        "Final",
-        1
+        sys.argv[1],
+        sys.argv[2],
+        int(sys.argv[3])
     )
     redirect_urls = get_urls_from_excel(
-        "all_hdl_urls.xlsx",
-        "Final",
-        5
+        sys.argv[4],
+        sys.argv[5],
+        int(sys.argv[6])
     )
 
     main(
