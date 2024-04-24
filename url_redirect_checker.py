@@ -1,3 +1,5 @@
+
+
 import sys
 import requests
 import openpyxl
@@ -5,9 +7,21 @@ from tqdm import tqdm
 
 
 def check_url_redirect(
-        original_url,
-        expected_redirect_url
-    ):
+        original_url: str,
+        expected_redirect_url: str
+    ) -> bool:
+    '''
+    Returns True if the original URL redirects to the expected URL.
+
+    Parameters:
+    - original_url (str): The URL to be checked.
+    - expected_redirect_url (str): The URL to which the original URL should
+        redirect.
+    
+    Returns:
+    - bool: True if the original URL redirects to the expected URL, False
+        otherwise.
+    '''
     try:
         response = requests.head(
             original_url,
@@ -21,16 +35,27 @@ def check_url_redirect(
             return True
         else:
             return False
-    except requests.exceptions.RequestException as err:
+    except Exception as err:
         print(f"Error: {err}")
         return False
 
 
 def get_urls_from_excel(
-        file_path,
-        sheet_name,
-        column_index
-    ):
+        file_path: str,
+        sheet_name: str,
+        column_index: int
+    ) -> list:
+    '''
+    Returns a list of URLs from an Excel file.
+
+    Parameters:
+    - file_path (str): The path to the Excel file.
+    - sheet_name (str): The name of the sheet in the Excel file.
+    - column_index (int): The index of the column containing the URLs.
+
+    Returns:
+    - list: A list of URLs.
+    '''
     urls = []
     try:
         workbook = openpyxl.load_workbook(file_path)
@@ -52,27 +77,20 @@ def get_urls_from_excel(
     return urls
 
 
-def main(hdl_urls, redirect_urls):
-    for i in tqdm(range(len(hdl_urls))):
-        if check_url_redirect(
-            hdl_urls[i],
-            redirect_urls[i]
-        ):
-            pass
-        else:
-            print('\n\n    >>>>',
-                ' '.join(
-                    f'''
-                    {i}. REDIRECTION ERROR: {hdl_urls[i]} does not
-                    redirect correctly.
-                    '''.split()
-                ),
-                '\n'
-            )
+def main() -> None:
+    '''
+    Main function.
+    According to the command line arguments, it reads the URLs from the
+    Excel files, checks if the URLs redirect correctly, and prints an error
+    message if the redirection fails.
 
+    Parameters:
+    - None
 
-if __name__ == "__main__":
-    hdl_urls = get_urls_from_excel(
+    Returns:
+    - None
+    '''
+    original_urls = get_urls_from_excel(
         sys.argv[1],
         sys.argv[2],
         int(sys.argv[3])
@@ -83,7 +101,23 @@ if __name__ == "__main__":
         int(sys.argv[6])
     )
 
-    main(
-        hdl_urls,
-        redirect_urls
-    )
+    for i in tqdm(range(len(original_urls))):
+        if check_url_redirect(
+            original_urls[i],
+            redirect_urls[i]
+        ):
+            pass
+        else:
+            print('\n\n    >>>>',
+                ' '.join(
+                    f'''
+                    {i}. REDIRECTION ERROR: {original_urls[i]} does not
+                    redirect correctly.
+                    '''.split()
+                ),
+                '\n'
+            )
+
+
+if __name__ == "__main__":
+    main()
