@@ -1,4 +1,12 @@
+'''
+A Python script that checks if a list of URLs redirect correctly.
 
+The script reads the URLs from two Excel columns, checks if the URLs
+redirect correctly, and prints an error message if the redirection fails.
+
+Author: Argyrios Tsagkalidis
+Date: 23 APR 2024
+'''
 
 import sys
 import requests
